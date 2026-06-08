@@ -1,0 +1,37 @@
+EXACT GO ARRAY:
+[126.0, 6.0, 1.0, 0.0, 118.0, 118.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 1.0, 1.0, 1850.0, 1.0, 0.0]
+
+EXACT COLUMN ORDER:
+0: Age
+1: RenovAge
+2: IsRenovated
+3: SubType
+4: SquareMeters
+5: LandplotSize
+6: NoView
+7: ViewForest
+8: ViewMountain
+9: ViewSea
+10: ViewUnlimited
+11: NoFacade
+12: FacadeCorner
+13: FacadeFrontage
+14: FacadeInterior
+15: FacadeThrough
+16: HeatType
+17: HeatFrom
+18: EnergyPerformance
+19: WC
+20: AC
+21: Elevator
+22: Parking
+23: StorageRoom
+24: AluminumFrames
+25: Bedrooms
+26: Pool
+27: Garden
+28: FloorLevel
+29: FloorCount
+30: ZoneValue
+31: MarketabillityFactor
+32: AdminName
