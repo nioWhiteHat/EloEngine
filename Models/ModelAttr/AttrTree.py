@@ -11,7 +11,7 @@ def main():
     parser.add_argument('--input_csv', type=str, required=True)
     parser.add_argument('--output_json', type=str, required=True)
     parser.add_argument('--target_col', type=str, default='AskingPricePerSqm')
-    parser.add_argument('--columns_dropped', type=str, default='UID,GeoLat,GeoLon,Distance,AgeSq,InteractionAgeDistance,LogInteraction,AskingPrice,AdCreationAge')
+    parser.add_argument('--columns_dropped', type=str, default='ZoneValue,MarketabilityFactor,UID,GeoLat,GeoLon,Distance,AgeSq,InteractionAgeDistance,LogInteraction,AskingPrice,AdCreationAge')
     args = parser.parse_args()
 
     df = pd.read_csv(args.input_csv)
@@ -39,8 +39,8 @@ def main():
         tree_method='hist',
         max_depth=8,
         min_child_weight=30,
-        learning_rate=0.3,
-        n_estimators=15,
+        learning_rate=0.05,
+        n_estimators=500,
         subsample=0.8,
         colsample_bytree=0.8
     )

@@ -1,5 +1,6 @@
 SubType,apartment,0
-SubType,maisonette,1
+SubType,detached_house,1
+SubType,maisonette,2
 HeatType,autonomous_central,0
 HeatType,autonomous_individual,1
 HeatType,central_heating,2

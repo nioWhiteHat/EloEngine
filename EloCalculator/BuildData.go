@@ -28,9 +28,9 @@ var PropertyMap = make(map[string]*Property)
 
 const (
 	EloBase          = 10000.0
-	WeightResidual   = 2000.0
-	WeightGeoPremium = 2500.0
-	WeightZScore     = 500.0
+	WeightResidual   = 3000.0
+	WeightGeoPremium = 3000.0
+	WeightZScore     = 3000.0
 )
 
 func RunEloPipeline(ctx context.Context, conn *pgx.Conn, inputCSV string, outputJSON string) error {
@@ -46,6 +46,9 @@ func RunEloPipeline(ctx context.Context, conn *pgx.Conn, inputCSV string, output
 	if err := FillAllNeighborhoodStats(ctx, conn, uids); err != nil {
 		return err
 	}
+	StandardizedMap := StandardizeProperties(PropertyMap)
+	PropertyMap = StandardizedMap
+
 
 	for uid := range PropertyMap {
 		CalculateElo(uid)
@@ -64,8 +67,8 @@ func RunEloPipeline(ctx context.Context, conn *pgx.Conn, inputCSV string, output
 
 var AllowedRegions = map[string]bool{
 	"Περιφερειακή Ενότητα Κεντρικού Τομέα Αθηνών": true,
-	"Περιφερειακή Ενότητα Βορείου Τομέα Αθηνών":   true,
-	"Περιφερειακή Ενότητα Νοτίου Τομέα Αθηνών":    true,
+	
+	"Περιφερειακή Ενότητα Δυτικού Τομέα Αθηνών": true,
 
 	
 	
@@ -256,4 +259,51 @@ func CalculateElo(uid string) {
 	}
 
 	prop.Elo = EloBase - (prop.ResidualValue * WeightResidual) + (prop.GeoPremium * WeightGeoPremium) + (zScore * WeightZScore)
+}
+
+func StandardizeProperties(inputMap map[string]*Property) map[string]*Property {
+	n := float64(len(inputMap))
+	if n == 0 {
+		return make(map[string]*Property)
+	}
+
+	var sumRes, sumGeo float64
+	for _, p := range inputMap {
+		sumRes += p.ResidualValue
+		sumGeo += p.GeoPremium
+	}
+
+	meanRes := sumRes / n
+	meanGeo := sumGeo / n
+
+	var sqDiffRes, sqDiffGeo float64
+	for _, p := range inputMap {
+		sqDiffRes += math.Pow(p.ResidualValue-meanRes, 2)
+		sqDiffGeo += math.Pow(p.GeoPremium-meanGeo, 2)
+	}
+
+	stdRes := math.Sqrt(sqDiffRes / n)
+	stdGeo := math.Sqrt(sqDiffGeo / n)
+
+	if stdRes == 0 {
+		stdRes = 1
+	}
+	if stdGeo == 0 {
+		stdGeo = 1
+	}
+
+	standardizedMap := make(map[string]*Property)
+	for k, p := range inputMap {
+		standardizedMap[k] = &Property{
+			Uid:            p.Uid,
+			ResidualValue:  (p.ResidualValue - meanRes) / stdRes,
+			GeoPremium:     (p.GeoPremium - meanGeo) / stdGeo,
+			PredictedPrice: p.PredictedPrice,
+			Mean500m:       p.Mean500m,
+			Std500m:        p.Std500m,
+			Elo:            p.Elo,
+		}
+	}
+
+	return standardizedMap
 }

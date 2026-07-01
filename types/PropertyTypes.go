@@ -72,7 +72,7 @@ WHERE bd.construction_year IS NOT NULL
     AND ba.square_meters > 10 
     AND p.transaction_type = $1
     AND p.item_type = 'residence'
-    AND p.subtype IN ('apartment','detatched_house','maisonette')
+    AND p.subtype IN ('apartment','detached_house','maisonette')
     AND bd.under_construction = false
     AND bd.construction_year <= 2026
 	AND bd.construction_year >= 1900

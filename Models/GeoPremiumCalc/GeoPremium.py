@@ -7,8 +7,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_json', type=str, required=True)
     parser.add_argument('--output_json', type=str, required=True)
-    parser.add_argument('--max_neighbors', type=int, default=25) # Max houses to average
-    parser.add_argument('--radius_meters', type=float, default=200.0) # Absolute distance limit
+    parser.add_argument('--max_neighbors', type=int, default=100) # Max houses to average
+    parser.add_argument('--radius_meters', type=float, default=160.0) # Absolute distance limit
     args = parser.parse_args()
 
     df = pd.read_json(args.input_json)

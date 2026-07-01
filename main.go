@@ -5,9 +5,9 @@ import (
 	"log"
 	onnxruntime "github.com/yalue/onnxruntime_go"
 
-	//"context"
-	//db "eiv-ranking/Database"
-	//elo "eiv-ranking/cmd/XGboost/EloCalculator"
+	"context"
+	db "eiv-ranking/Database"
+	elo "eiv-ranking/cmd/XGboost/EloCalculator"
 	t "eiv-ranking/cmd/XGboost/types"
 	"encoding/csv"
 
@@ -19,31 +19,36 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	//testing "eiv-ranking/cmd/XGboost/Testing"
-	p "eiv-ranking/cmd/XGboost/PredictingPrice"
+	//p "eiv-ranking/cmd/XGboost/PredictingPrice"
 )
 func main() {
-	//con,_ := db.InitDB()
+	con,_ := db.InitDB()
 	//BuildFiles(con)
-	/*err := RunModelAttr("Modeled_Sold.csv", "Models/JsonModelData/ModelAttr_Sold.json")
+	err := RunModelAttr("Modeled_Sold.csv", "Models/JsonModelData/ModelAttr_Sold.json")
 	if err != nil {
 		fmt.Printf("Error running ModelAttr: %v\n", err)
-	}*/
-	/*RunGeoPremiumCalc("Models/JsonModelData/ModelAttr_Sold.json", "Models/JsonModelData/GeoPremium_Sold.json")
-	err := RunModelGeo("Modeled_Sold.csv", "Models/JsonModelData/GeoPremium_Sold.json", "Models/JsonModelData/ModelGeo_Sold.json")
+	}
+	err = RunGeoPremiumCalc("Models/JsonModelData/ModelAttr_Sold.json", "Models/JsonModelData/GeoPremium_Sold.json")
 	if err != nil {
-		fmt.Printf("Error running ModelGeo: %v\n", err)
-	}*/
-	Mappings, err := p.LoadCategoryMappings("Models/Saved/CategoryMappings.txt")
+		fmt.Printf("Error running GeoCalc: %v\n", err)
+	}
+	err = RunModelGeo("Modeled_Sold.csv", "Models/JsonModelData/GeoPremium_Sold.json", "Models/JsonModelData/ModelGeo_Sold.json")
+	if err != nil {
+		fmt.Printf("Error running Final: %v\n", err)
+	}
+	elo.MergeMLDataToCSV("Modeled_Sold.csv","Models/JsonModelData/ModelGeo_Sold.json","Modeled_Sold_ML.csv")
+	elo.RunEloPipeline(context.Background(),con,"Modeled_Sold_ML.csv","TestingElo2.json")
+	/*Mappings, err := p.LoadCategoryMappings("Models/Saved/CategoryMappings.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
-	prop := p.GetProperty()
+	/*prop := p.GetProperty()
 	features := p.PrepareFeatures(prop, Mappings)
 	predictedPrice, err := p.PredictSinglePoint("Models/Saved/ModelAttr_Trees.onnx", features)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Predicted Price per Sqm: %.2f\n", predictedPrice)
+	fmt.Printf("Predicted Price per Sqm: %.2f\n", predictedPrice)*/
 	
 	
 
